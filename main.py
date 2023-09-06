@@ -68,7 +68,6 @@ lexer = lex.lex()
 # Test it out
 data = '''
 int x = (3 + 4) * 10
-bool y = 1
 '''
  
 # Give the lexer some input
