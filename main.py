@@ -38,7 +38,7 @@ tokens = [
     'NUMBER', 'REAL', 'MAS', 'MENOS', 'MULTI', 'DIVIDE', 'ASIG', 'LPAREN', 'RPAREN',
     'MOD', 'ID', 'CARACTER', 'CADENA', 'INCRE', 'DECRE', 'SUMASIG', 'MODASIG', 'IGUAL', 
     'DIFE', 'MENOR', 'MAYOR', 'MENORIGUAL', 'MAYORIGUAL', 'AND', 'OR', 'LKEY', 'RKEY' ,
-    'MULASIG', 'DIVASIG', 'RESTASIG', 'DOSP', 'COMA'
+    'MULASIG', 'DIVASIG', 'RESTASIG', 'DOSP', 'COMA', 'COMENTARIO'
 ] + list(reserved.values())
 
 # Regular expression rules for simple tokens
@@ -73,7 +73,7 @@ t_COMA = r','
 
 
 def t_REAL(t):
-  r'^\d+(\.\d+)?$'
+  r'\d+(\.\d+)'
   t.value = float(t.value)  # Check for reserved words
   return t
 
@@ -82,8 +82,12 @@ def t_ID(t):
   t.type = reserved.get(t.value, 'ID')  # Check for reserved words
   return t
 
+def t_COMENTARIO(t):
+  r'\/\/.*|\/\*[\s\S]*\*\/'
+  return t
+
 def t_CADENA(t):
-  r'".*?"'
+  r'".*"'
   t.value = str(t.value)  # Check for reserved words
   return t
 
@@ -122,7 +126,8 @@ lexer = lex.lex()
 
 # Test it out
 data = '''
-func pepeL(){
+/**/
+func: pepeL(int a != 3.14){
   for: 1 of 4
     out: "Hola mundo"
 }
@@ -137,4 +142,4 @@ while True:
   if not tok:
     break  # No more input
   #print(tok)
-  print(tok.type, tok.value, tok.lineno, tok.lexpos)
+  print(tok.type, tok.value)
