@@ -26,8 +26,6 @@ reserved = {
     'cs': 'CASE',
     'bkr': 'BREAK',
     'ctn': 'CONTINUE',
-    'true': 'TRUE',
-    'false': 'FALSE',
     'func': 'FUNCION',
     'in': 'ENTRADA',
     'out': 'SALIDA',
@@ -38,7 +36,7 @@ tokens = [
     'NUMBER', 'REAL', 'MAS', 'MENOS', 'MULTI', 'DIVIDE', 'ASIG', 'LPAREN', 'RPAREN',
     'MOD', 'ID', 'CARACTER', 'CADENA', 'INCRE', 'DECRE', 'SUMASIG', 'MODASIG', 'IGUAL', 
     'DIFE', 'MENOR', 'MAYOR', 'MENORIGUAL', 'MAYORIGUAL', 'AND', 'OR', 'LKEY', 'RKEY' ,
-    'MULASIG', 'DIVASIG', 'RESTASIG', 'DOSP', 'COMA', 'COMENTARIO'
+    'MULASIG', 'DIVASIG', 'RESTASIG', 'DOSP', 'COMA', 'COMENTARIO', 'BOOLEANO'
 ] + list(reserved.values())
 
 # Regular expression rules for simple tokens
@@ -77,6 +75,11 @@ def t_REAL(t):
   t.value = float(t.value)  # Check for reserved words
   return t
 
+def t_BOOLEANO(t):
+  r'True|False'
+  t.value = bool(t.value)  
+  return t
+
 def t_ID(t):
   r'[a-zA-Z]+ ( [a-zA-Z0-9]* )'
   t.type = reserved.get(t.value, 'ID')  # Check for reserved words
@@ -90,8 +93,6 @@ def t_CADENA(t):
   r'".*"'
   t.value = str(t.value)  # Check for reserved words
   return t
-
-# A regular expression rule with some action code
 
 
 def t_NUMBER(t):
@@ -127,7 +128,7 @@ lexer = lex.lex()
 # Test it out
 data = '''
 /**/
-func: pepeL(int a != 3.14){
+func: pepeL(bool True != 3.14){
   for: 1 of 4
     out: "Hola mundo"
 }
@@ -142,4 +143,4 @@ while True:
   if not tok:
     break  # No more input
   #print(tok)
-  print(tok.type, tok.value)
+  print(tok.type, tok.value, tok.lineno, tok.lexpos)
